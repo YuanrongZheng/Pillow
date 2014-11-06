@@ -255,6 +255,7 @@ except ImportError:
 
 RAWMODE = {
     "1": "L",
+    "1;1": "L",
     "L": "L",
     "P": "P",
 }
@@ -289,6 +290,10 @@ def _save(im, fp, filename):
     except KeyError:
         palette = None
         im.encoderinfo["optimize"] = im.encoderinfo.get("optimize", True)
+
+    if im.mode == "1" and not palette:
+        imOut = im._new(im.im)
+        imOut.mode = "1;1"
 
     header, usedPaletteColors = getheader(imOut, palette, im.encoderinfo)
     for s in header:
@@ -425,11 +430,16 @@ def getheader(im, palette=None, info=None):
             sourcePalette = palette[:768]
         else:
             sourcePalette = im.im.getpalette("RGB")[:768]
-    else:  # L-mode
+    elif im.mode == "L":  # L-mode
         if palette and isinstance(palette, bytes):
             sourcePalette = palette[:768]
         else:
             sourcePalette = bytearray([i//3 for i in range(768)])
+    else:
+        if palette and isinstance(palette, bytes):
+            sourcePalette = palette[:768]
+        else:
+            sourcePalette = bytearray([0, 0, 0, 255, 255, 255])
 
     usedPaletteColors = paletteBytes = None
 

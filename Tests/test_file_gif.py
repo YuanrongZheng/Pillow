@@ -29,21 +29,23 @@ class TestFileGif(PillowTestCase):
         from io import BytesIO
 
         def test_grayscale(optimize):
-            im = Image.new("L", (1, 1), 0)
+            im = Image.new("L", (2, 2), 0)
+            for i in range(0, 4):
+                im.putpixel((i % 2, i // 2), i * 64)
             file = BytesIO()
             im.save(file, "GIF", optimize=optimize)
             return len(file.getvalue())
-
         def test_bilevel(optimize):
-            im = Image.new("1", (1, 1), 0)
+            im = Image.new("1", (2, 2), 0)
+            for i in range(0, 4):
+                im.putpixel((i % 2, i // 2), ((i + 1) // 2) % 2)
             file = BytesIO()
             im.save(file, "GIF", optimize=optimize)
             return len(file.getvalue())
-
-        self.assertEqual(test_grayscale(0), 800)
-        self.assertEqual(test_grayscale(1), 38)
-        self.assertEqual(test_bilevel(0), 800)
-        self.assertEqual(test_bilevel(1), 800)
+        self.assertEqual(test_grayscale(0), 802)
+        self.assertEqual(test_grayscale(1), 46)
+        self.assertEqual(test_bilevel(0), 40)
+        self.assertEqual(test_bilevel(1), 40)
 
     def test_optimize_full_l(self):
         from io import BytesIO

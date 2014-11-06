@@ -158,6 +158,15 @@ pack1L(UINT8* out, const UINT8* in, int pixels)
 }
 
 static void
+pack11L(UINT8* out, const UINT8* in, int pixels)
+{
+    int i;
+    /* bilevel, stored as bytes */
+    for (i = 0; i < pixels; i++)
+	out[i] = (in[i] != 0) ? 1: 0;
+}
+
+static void
 packP4(UINT8* out, const UINT8* in, int pixels)
 {
     while (pixels >= 2) {
@@ -488,6 +497,7 @@ static struct {
     {"1",	"1;R",   	1,	pack1R},
     {"1",	"1;IR",   	1,	pack1IR},
     {"1",	"L",		8,	pack1L},
+    {"1;1",	"L",		8,	pack11L},
 
     /* greyscale */
     {"L",	"L",   		8,	copy1},

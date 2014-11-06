@@ -185,6 +185,86 @@ unpack1IR(UINT8* out, const UINT8* in, int pixels)
     }
 }
 
+static void
+unpack11(UINT8* out, const UINT8* in, int pixels)
+{
+    /* bits (msb first, white is non-zero) */
+    while (pixels > 0) {
+        UINT8 byte = *in++;
+        switch (pixels) {
+        default:    *out++ = (byte & 128) ? 1 : 0; byte <<= 1;
+        case 7:     *out++ = (byte & 128) ? 1 : 0; byte <<= 1;
+        case 6:     *out++ = (byte & 128) ? 1 : 0; byte <<= 1;
+        case 5:     *out++ = (byte & 128) ? 1 : 0; byte <<= 1;
+        case 4:     *out++ = (byte & 128) ? 1 : 0; byte <<= 1;
+        case 3:     *out++ = (byte & 128) ? 1 : 0; byte <<= 1;
+        case 2:     *out++ = (byte & 128) ? 1 : 0; byte <<= 1;
+        case 1:     *out++ = (byte & 128) ? 1 : 0;
+        }
+        pixels -= 8;
+    }
+}
+
+static void
+unpack11I(UINT8* out, const UINT8* in, int pixels)
+{
+    /* bits (msb first, white is zero) */
+    while (pixels > 0) {
+        UINT8 byte = *in++;
+        switch (pixels) {
+        default:    *out++ = (byte & 128) ? 0 : 1; byte <<= 1;
+        case 7:     *out++ = (byte & 128) ? 0 : 1; byte <<= 1;
+        case 6:     *out++ = (byte & 128) ? 0 : 1; byte <<= 1;
+        case 5:     *out++ = (byte & 128) ? 0 : 1; byte <<= 1;
+        case 4:     *out++ = (byte & 128) ? 0 : 1; byte <<= 1;
+        case 3:     *out++ = (byte & 128) ? 0 : 1; byte <<= 1;
+        case 2:     *out++ = (byte & 128) ? 0 : 1; byte <<= 1;
+        case 1:     *out++ = (byte & 128) ? 0 : 1;
+        }
+        pixels -= 8;
+    }
+}
+
+static void
+unpack11R(UINT8* out, const UINT8* in, int pixels)
+{
+    /* bits (lsb first, white is non-zero) */
+    while (pixels > 0) {
+        UINT8 byte = *in++;
+        switch (pixels) {
+        default:    *out++ = (byte & 1) ? 1 : 0; byte >>= 1;
+        case 7:     *out++ = (byte & 1) ? 1 : 0; byte >>= 1;
+        case 6:     *out++ = (byte & 1) ? 1 : 0; byte >>= 1;
+        case 5:     *out++ = (byte & 1) ? 1 : 0; byte >>= 1;
+        case 4:     *out++ = (byte & 1) ? 1 : 0; byte >>= 1;
+        case 3:     *out++ = (byte & 1) ? 1 : 0; byte >>= 1;
+        case 2:     *out++ = (byte & 1) ? 1 : 0; byte >>= 1;
+        case 1:     *out++ = (byte & 1) ? 1 : 0;
+        }
+        pixels -= 8;
+    }
+}
+
+static void
+unpack11IR(UINT8* out, const UINT8* in, int pixels)
+{
+    /* bits (lsb first, white is zero) */
+    while (pixels > 0) {
+        UINT8 byte = *in++;
+        switch (pixels) {
+        default:    *out++ = (byte & 1) ? 0 : 1; byte >>= 1;
+        case 7:     *out++ = (byte & 1) ? 0 : 1; byte >>= 1;
+        case 6:     *out++ = (byte & 1) ? 0 : 1; byte >>= 1;
+        case 5:     *out++ = (byte & 1) ? 0 : 1; byte >>= 1;
+        case 4:     *out++ = (byte & 1) ? 0 : 1; byte >>= 1;
+        case 3:     *out++ = (byte & 1) ? 0 : 1; byte >>= 1;
+        case 2:     *out++ = (byte & 1) ? 0 : 1; byte >>= 1;
+        case 1:     *out++ = (byte & 1) ? 0 : 1;
+        }
+        pixels -= 8;
+    }
+}
+
 
 /* Unpack to "L" image */
 
@@ -1045,6 +1125,10 @@ static struct {
     {"1",       "1;I",          1,      unpack1I},
     {"1",       "1;R",          1,      unpack1R},
     {"1",       "1;IR",         1,      unpack1IR},
+    {"1",       "1;1",          1,      unpack11},
+    {"1",       "1;1I",         1,      unpack11I},
+    {"1",       "1;1R",         1,      unpack11R},
+    {"1",       "1;1IR",        1,      unpack11IR},
 
     /* greyscale */
     {"L",       "L;2",          2,      unpackL2},
